@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>snake game</title>
+  <link href="https://fonts.googleapis.com/css?family=Modak" rel="stylesheet">
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+
+<div class="container">
+
+  <div class="popup-gameOver-overlay">
+    <div class="popup-gameOver-content">
+      <div class="popup-gameOver">game over</div>
+      <button class="popup-gameOver-button">try again ?</button>
+    </div>
+  </div>
+
+  <div class="popup-start-overlay">
+    <div class="popup-start-content">
+      <div class="popup-start">Snake Game</div>
+      <div>control by arrow keys</div>
+      <button class="popup-start-button">Click here to start</button>
+    </div>
+  </div>
+
+  <div class="title">snake game</div>
+  <canvas id="canvas" width="650" height="650"></canvas>
+
+</div>
+
+<script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous">
+</script>
+<script src="index.js" charset="utf-8"></script>
+
+</body>
+</html>
