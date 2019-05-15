@@ -1,7 +1,7 @@
 const cvs = document.querySelector('#canvas');
 const ctx = cvs.getContext('2d');
 
-const cvsW = cvs.width;
+const cvsW = cvs.width,
       cvsH = cvs.height;
 
 const snakeW = 10,
@@ -9,16 +9,17 @@ const snakeW = 10,
 
 let score = 0;
 
-let direction = 'right';
+let direction;
+let nextDirection = 'right';
 
 let food = {
   x: Math.floor( (Math.random() * 65) + 1 ),
   y: Math.floor( (Math.random() * 65) + 1 )
 }
 
-document.querySelector('.popup-gameOver-button').addEventListener('click', () => location.reload() );
+let lock = true;
 
-document.addEventListener('keydown', userDirection);
+document.querySelector('.popup-gameOver-button').addEventListener('click', () => location.reload() );
 
 document.addEventListener('DOMContentLoaded', function(){
   document.querySelector('.popup-start-button').addEventListener('click', function(){
@@ -37,21 +38,18 @@ document.addEventListener('DOMContentLoaded', function(){
         drawSnake(x,y);
       }
 
-      drawFood(food.x, food.y);
-
       let snakeHeadX = snake[0].x;
       let snakeHeadY = snake[0].y;
 
-      if( snakeHeadX < 0 || snakeHeadY < 0 || snakeHeadX >= cvsW/snakeW || snakeHeadY >= cvsH/snakeH || checkSnakeBodyColision(snakeHeadX, snakeHeadY, snake) ){
-        console.log('colision detected');
-        clearInterval(interval);
-        $('.popup-gameOver-overlay').toggleClass('popup-gameOver-overlay-active');
-      }
+      this.addEventListener('keydown', userDirection);
 
-      if(direction == 'left')       snakeHeadX--;
-      else if(direction == 'up')    snakeHeadY--;
-      else if(direction == 'right') snakeHeadX++;
-      else if(direction == 'down')  snakeHeadY++;
+      if(nextDirection == 'left')       snakeHeadX--;
+      else if(nextDirection == 'up')    snakeHeadY--;
+      else if(nextDirection == 'right') snakeHeadX++;
+      else if(nextDirection == 'down')  snakeHeadY++;
+      direction = nextDirection;
+
+      drawFood(food.x, food.y);
 
       if( snakeHeadX == food.x && snakeHeadY == food.y ){
         score++;
@@ -59,23 +57,41 @@ document.addEventListener('DOMContentLoaded', function(){
           x: Math.floor( (Math.random() * 65) + 1 ),
           y: Math.floor( (Math.random() * 65) + 1 )
         }
-        var newHead = {
+        newHead = {
           x: snakeHeadX,
           y: snakeHeadY
         }
       }else{
         snake.pop();
-        var newHead = {
+        newHead = {
           x: snakeHeadX,
           y: snakeHeadY
         }
+        lock = true;
       }
-      snake.unshift(newHead);
+
       drawScore(score);
+      snake.unshift(newHead);
+
+      if( snakeHeadX < 0 || snakeHeadY < 0 || snakeHeadX >= cvsW/snakeW || snakeHeadY >= cvsH/snakeH || checkSnakeBodyColision(snakeHeadX, snakeHeadY, snake) ){
+        console.log('colision detected');
+        clearInterval(interval);
+        $('.popup-gameOver-overlay').toggleClass('popup-gameOver-overlay-active');
+      }
+
     }
-    let interval = setInterval(draw, 80);
+    let interval = setInterval(draw, 100);
   });
 });
+
+function checkSnakeBodyColision( snakeHeadX, snakeHeadY, snake ){
+  for( let i = 1; i < snake.length; i++ ){
+    if( snakeHeadX == snake[i].x && snakeHeadY == snake[i].y ){
+      return true;
+    }
+  }
+  return false;
+}
 
 function drawSnake(x,y){
   ctx.fillStyle = '#fff';
@@ -90,21 +106,13 @@ function drawFood(x,y){
   ctx.fillRect( x*snakeW, y*snakeH, snakeW, snakeH );
 }
 
-function checkSnakeBodyColision( x, y, array ){
-  for( let i = 1; i < array.length; i++ ){
-    if( x == array[i].x && y == array[i].y ){
-      return true;
-    }
-  }
-  return false;
-}
-
 function userDirection(e){
   let key = e.keyCode;
-  if( key == 37 && direction != 'right' )     direction = 'left';
-  else if( key == 38 && direction != 'down' ) direction = 'up';
-  else if( key == 39 && direction != 'left' ) direction = 'right';
-  else if( key == 40 && direction != 'up' )   direction = 'down';
+  if( key == 37 && direction != 'right' )     nextDirection = 'left';
+  else if( key == 38 && direction != 'down' ) nextDirection = 'up';
+  else if( key == 39 && direction != 'left' ) nextDirection = 'right';
+  else if( key == 40 && direction != 'up' )   nextDirection = 'down';
+
 };
 
 function drawScore(x){
